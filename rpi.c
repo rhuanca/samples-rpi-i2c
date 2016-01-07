@@ -25,12 +25,10 @@ int map_peripheral(struct bcm2835_peripheral *p) {
     }
 
     p->addr = (volatile unsigned int *) p->map;
-
     return 0;
 }
 
 void unmap_peripheral(struct bcm2835_peripheral *p) {
-
     munmap(p->map, BLOCK_SIZE);
     close(p->mem_fd);
 }

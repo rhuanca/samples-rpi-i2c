@@ -1,28 +1,17 @@
 #ifndef LED_ON_RPI_H
 #define LED_ON_RPI_H
 
-#include <stdio.h>
-
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <stdio.h>
 #include <fcntl.h>
-
 #include <unistd.h>
-
-#define BCM2708_PERI_BASE       0x20000000
-#define GPIO_BASE               (BCM2708_PERI_BASE + 0x200000)    // GPIO controller
 
 #define BLOCK_SIZE        (4*1024)
 
-// IO Access
-struct bcm2835_peripheral {
-    unsigned long addr_p;
-    int mem_fd;
-    void *map;
-    volatile unsigned int *addr;
-};
-
+#define BCM2708_PERI_BASE       0x20000000
+#define GPIO_BASE               (BCM2708_PERI_BASE + 0x200000)    // GPIO controller
 
 // GPIO setup macros. Always use INP_GPIO(x) before using OUT_GPIO(x)
 #define INP_GPIO(g)   *(gpio.addr + ((g)/10)) &= ~(7<<(((g)%10)*3))
@@ -33,5 +22,20 @@ struct bcm2835_peripheral {
 #define GPIO_CLR  *(gpio.addr + 10) // clears bits which are 1 ignores bits which are 0
 
 #define GPIO_READ(g)  *(gpio.addr + 13) &= (1<<(g))
+
+// IO Access
+struct bcm2835_peripheral {
+    unsigned long addr_p;
+    int mem_fd;
+    void *map;
+    volatile unsigned int *addr;
+};
+
+int map_peripheral(struct bcm2835_peripheral *p);
+void unmap_peripheral(struct bcm2835_peripheral *p);
+
+// I2C Function Prototypes
+void i2c_init();
+void wait_i2c_done();
 
 #endif //LED_ON_RPI_H
