@@ -10,5 +10,5 @@ SET(CMAKE_CXX_COMPILER ${ARM_TOOL_CHAIN}/bin/arm-linux-gnueabihf-g++)
 # rpi target environment
 SET(CMAKE_FIND_ROOT_PATH  ${ARM_TOOL_CHAIN}/arm-linux-gnueabihf/libc)
 
-set(SOURCE_FILES main.c)
+set(SOURCE_FILES main.c rpi.c)
 add_executable(samples_rpi_i2c ${SOURCE_FILES})
