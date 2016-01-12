@@ -18,6 +18,9 @@ unsigned int decimal_to_bcd(unsigned int d) {
 }
 
 int main() {
+    int data = 0;
+    printf("\n\nstarting program...\n");
+    printf("=====================\n");
 
     /* Gain access to raspberry pi gpio and i2c peripherals */
     if(map_peripheral(&gpio) == -1) {
@@ -32,20 +35,43 @@ int main() {
     /* BSC0 is on GPIO 0 & 1 */
     i2c_init();
 
-    printf("checking initial values of registers..\n");
-    printf("ADDRESS: %8X\n",BSC0_A);
-    printf("DIV: %8X\n",BSC0_DIV);
+    // 0x82;
 
-    printf("\n=============> working...\n\n");
-    printf("set address\n");
+    /* I2C Device Address 0x51 (See Datasheet) */
     BSC0_A = 0x51;
-    printf("ADDRESS: %8X\n",BSC0_A);
 
+    /* Write operation to restart the PCF8563 register at index 2 ('secs' field) */
+    BSC0_DLEN = 1;            // one byte
+    BSC0_FIFO = 2;            // value 2
+    BSC0_S = CLEAR_STATUS;    // Reset status bits (see #define)
+    BSC0_C = START_WRITE;     // Start Write (see #define)
 
+    wait_i2c_done();
+
+//    /* Start Read of RTC chip's time */
+//    BSC0_DLEN = 7;
+//    BSC0_S = CLEAR_STATUS;  // Reset status bits (see #define)
+//    BSC0_C = START_READ;    // Start Read after clearing FIFO (see #define)
+//
+//    wait_i2c_done();
+//
+//    /* Store values in struct */
+//    t.tm_sec = bcd_to_decimal(BSC0_FIFO & 0x7f);
+//    t.tm_min = bcd_to_decimal(BSC0_FIFO & 0x7f);
+//    t.tm_hour = bcd_to_decimal(BSC0_FIFO & 0x3f);
+//    t.tm_mday = bcd_to_decimal(BSC0_FIFO & 0x3f);
+//    t.tm_wday = bcd_to_decimal(BSC0_FIFO & 0x07);
+//    t.tm_mon = bcd_to_decimal(BSC0_FIFO & 0x1f) - 1; // 1-12 --> 0-11
+//    t.tm_year = bcd_to_decimal(BSC0_FIFO) + 100;
+//
+//    printf("%02d:%02d:%02d %02d/%02d/%02d (UTC on PCF8563)\n",
+//           t.tm_hour,t.tm_min,t.tm_sec,
+//           t.tm_mday,t.tm_mon + 1,t.tm_year - 100);
+
+    printf("* BSC0_S: %08X\n", BSC0_S);
 
     /* Unmap the peripheral */
     unmap_peripheral(&gpio);
     unmap_peripheral(&bsc0);
-
     return 0;
 }

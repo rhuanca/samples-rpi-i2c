@@ -42,6 +42,7 @@
 #define BSC_C_ST     (1 << 7)
 #define BSC_C_CLEAR  (1 << 4)
 #define BSC_C_READ   1
+#define BSC_C_WRITE  0
 
 #define START_READ   BSC_C_I2CEN|BSC_C_ST|BSC_C_CLEAR|BSC_C_READ
 #define START_WRITE  BSC_C_I2CEN|BSC_C_ST
